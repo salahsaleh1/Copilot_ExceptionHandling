@@ -64,21 +64,73 @@ This is the default and recommended approach for **critical failures**.
 - Control is transferred to the system **On Error** topic
 - You can present a customized message to the user
 
+<img width="1146" height="628" alt="image" src="https://github.com/user-attachments/assets/189993e2-fdb3-4d31-adbc-495a48879f07" />
+
+
 ### Best Practices
 - Show a clear, user-friendly message
-- Avoid exposing technical error details to end users
-- Capture system variables such as:
-  - Error message
-  - Error code
-  - Conversation ID
+- Notify your team whenever an error occurs.
+- Choose an appropriate notification method:
+  - Send a message to a Microsoft Teams channel
+  - Send an email
+  - Create a ServiceNow incident
+- Prompt alerting enables the team to begin troubleshooting quickly.
+
 
 ### Advanced Tip
-Use a generative step in the error topic to:
-- Summarize the failure in plain language
-- Suggest next steps for the user
-- Include the summary in an automated support notification (email, Teams, or ticketing system)
+- If you have sufficient Copilot Studio credits, you can enhance exception handling by:
+  - Sending the support team a brief summary of the issue
+  - Including suggestions for how to resolve it
 
-This approach is ideal when continuing the conversation would produce incorrect or misleading results.
+- To implement this approach:
+  - Save the connector name and action name in a global variable before the action runs
+  - This allows you to reference them later in the **On Error** topic
+    
+ ````
+"The connector action named " & Global.sAction & " has thrown an error during execution.
+The error code is: " & System.Error.Code & "
+The error message is: " & System.Error.Message & "
+
+Based on this information, generate a concise and professional summary suitable for a support team email. Please include:
+- A brief explanation of the issue
+- Suggested troubleshooting steps
+- Relevant documentation links or keywords to investigate further"
+````
+
+- In the **On Error** topic:
+  - Before sending the email, add a **Create generative answers** node
+  - Provide the required input to this node
+  - Uncheck the **Send a message** option so the agent does not post the response in the chat
+  - Store the generated response in a variable
+
+- Since the response will be sent via email:
+  - Update the prompt to generate the output in **HTML** instead of Markdown
+  - Use the generated HTML content as the body of the exception email
+<img width="650" height="791" alt="image" src="https://github.com/user-attachments/assets/6449f7d7-2a4f-4463-a844-93c9d8d7a300" />
+
+---
+
+## Application Insights
+
+If your bot is already connected to **Azure Application Insights**, or you plan to connect it, you should log a **custom telemetry event** to capture error details. This makes it easier to track and analyse issues over time.
+
+### Custom Telemetry Event Properties
+
+The **Custom Telemetry Event Properties** menu allows you to:
+
+- Define the **event name**
+- Specify the event **properties** in **JSON format**
+
+<img width="581" height="240" alt="image" src="https://github.com/user-attachments/assets/6d850412-bd32-441a-a7d6-d6277b717d58" />
+
+
+```json
+{
+  "propertyName": "propertyValue",
+  "errorCode": "string",
+  "description": "string"
+}
+```
 
 ---
 
