@@ -56,6 +56,9 @@ Copilot Studio provides **two main ways** to handle connector failures.
 
 This is the default and recommended approach for **critical failures**.
 
+<img width="353" height="492" alt="image" src="https://github.com/user-attachments/assets/8ba0f534-d794-4589-9b02-f6e5303dc93b" />
+
+
 ### How it Works
 - If the connector fails, the topic execution stops
 - Control is transferred to the system **On Error** topic
